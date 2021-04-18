@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE HTML >
+
+
+
+<html>
+
+   <head>
+      <title>EyeOS</title>
+
+
+
+ <script src="https://api.gazerecorder.com/GazeCloudAPI.js" ></script>
+
+
+      <style type="text/css">
+         body {
+         overflow: hidden;
+         }
+      </style>
+
+      <style>
+          .bn33 {
+              border: 5em;
+              cursor: pointer;
+              outline: none;
+              font-size: 16px;
+              -webkit-transform: translate(0);
+              transform: translate(0);
+              background-image: linear-gradient(45deg, #4568dc, #b06ab3);
+              padding: 0.7em 2em;
+              border-radius: 1px;
+              box-shadow: 1px 1px 10px rgba(255, 255, 255, 0.438);
+              -webkit-transition: box-shadow 0.25s;
+              transition: box-shadow 0.25s;
+              color: white;
+          }
+      </style>
+
+      <style>
+      .bn632-hover {
+      width: 200px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #764ba2;
+      cursor: pointer;
+      margin: 20px;
+      height: 200px;
+      text-align:center;
+      border: none;
+      background-size: 300% 100%;
+      border-radius: 50px;
+      moz-transition: all .4s ease-in-out;
+      -o-transition: all .4s ease-in-out;
+      -webkit-transition: all .4s ease-in-out;
+      transition: all .4s ease-in-out;
+      }
+
+      .bn632-hover:hover {
+      background-position: 100% 0;
+      moz-transition: all .4s ease-in-out;
+      -o-transition: all .4s ease-in-out;
+      -webkit-transition: all .4s ease-in-out;
+      transition: all .4s ease-in-out;
+      }
+
+      .bn632-hover:focus {
+      outline: none;
+      }
+
+      .bn632-hover.bn20 {
+      background-image: linear-gradient(
+      to right,
+      #667eea,
+      #9FDCF7,
+      #6b8dd6,
+      #9FDCF7
+      );
+      box-shadow: 0 4px 15px 0 rgba(116, 79, 168, 0.75);
+      }
+      </style>
+
+      <style>
+      .bn633-hover {
+      width: 160px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      margin: 20px;
+      height: 55px;
+      text-align:center;
+      border: none;
+      background-size: 300% 100%;
+      border-radius: 50px;
+      moz-transition: all .4s ease-in-out;
+      -o-transition: all .4s ease-in-out;
+      -webkit-transition: all .4s ease-in-out;
+      transition: all .4s ease-in-out;
+      }
+
+      .bn633-hover:hover {
+      background-position: 100% 0;
+      moz-transition: all .4s ease-in-out;
+      -o-transition: all .4s ease-in-out;
+      -webkit-transition: all .4s ease-in-out;
+      transition: all .4s ease-in-out;
+      }
+
+      .bn633-hover:focus {
+      outline: none;
+      }
+
+      .bn633-hover.bn20 {
+      background-image: linear-gradient(
+      to right,
+      #667eea,
+      #764ba2,
+      #6b8dd6,
+      #8e37d7
+      );
+      box-shadow: 0 4px 15px 0 rgba(116, 79, 168, 0.75);
+      }
+      </style>
+
+      <style>
+      html, body {
+        width: 100%;
+        height:100%;
+      }
+
+      body {
+          background: linear-gradient(-45deg, #EEC5F4, #DAE5F8, #9FDCF7, #BE9FF7);
+          background-size: 400% 400%;
+          animation: gradient 15s ease infinite;
+      }
+
+      @keyframes gradient {
+          0% {
+              background-position: 0% 50%;
+          }
+          50% {
+              background-position: 100% 50%;
+          }
+          100% {
+              background-position: 0% 50%;
+          }
+      }
+      </style>
+
+      <script type = "text/javascript" >
+
+
+         function PlotGaze(GazeData) {
+
+/*
+	GazeData.state // 0: valid gaze data; -1 : face tracking lost, 1 : gaze uncalibrated
+	GazeData.docX // gaze x in document coordinates
+	GazeData.docY // gaze y in document cordinates
+	GazeData.time // timestamp
+*/
+
+
+             document.getElementById("GazeData").innerHTML = "GazeX: " + GazeData.GazeX + " GazeY: " + GazeData.GazeY;
+             document.getElementById("HeadPhoseData").innerHTML = " HeadX: " + GazeData.HeadX + " HeadY: " + GazeData.HeadY + " HeadZ: " + GazeData.HeadZ;
+             document.getElementById("HeadRotData").innerHTML = " Yaw: " + GazeData.HeadYaw + " Pitch: " + GazeData.HeadPitch + " Roll: " + GazeData.HeadRoll;
+
+
+         var x = GazeData.docX;
+         var y = GazeData.docY;
+
+         var gaze = document.getElementById("gaze");
+         x -= gaze .clientWidth/2;
+         y -= gaze .clientHeight/2;
+
+         document.getElementById("GazeData").innerHTML += " " + x + " " + y;
+
+         let request = new XMLHttpRequest();
+         request.open('POST', 'http://127.0.0.1:5000/eyedata?x='+x+'&y='+y+'&dx='+GazeData.docX+'&dy='+GazeData.docY+'&gx='+GazeData.GazeX+'&gy='+GazeData.GazeY);
+         request.send();
+
+	gaze.style.left = x + "px";
+	gaze.style.top = y + "px";
+
+
+         if(GazeData.state != 0)
+         {
+         	if( gaze.style.display  == 'block')
+         	gaze  .style.display = 'none';
+         }
+         else
+         {
+         	if( gaze.style.display  == 'none')
+         	gaze  .style.display = 'block';
+         }
+
+         }
+
+         //////set callbacks/////////
+   window.addEventListener("load", function() {
+
+         GazeCloudAPI.OnCalibrationComplete =function(){ console.log('gaze Calibration Complete')  }
+         GazeCloudAPI.OnCamDenied =  function(){ console.log('camera  access denied')  }
+         GazeCloudAPI.OnError =  function(msg){ console.log('err: ' + msg)  }
+         GazeCloudAPI.UseClickRecalibration = true;
+      	 GazeCloudAPI.OnResult = PlotGaze;
+          });
+
+      </script>
+
+      <script>
+        function clickit() {
+        document.getElementById("Click").innerHTML = 'Good Job! You clicked the button!'
+
+        }
+
+        function dclickit() {
+        document.getElementById("Click").innerHTML = "You weren't supposed to click that! Try again. "
+
+        }
+      </script>
+   </head>
+   <body >
+
+
+      <img src="ibrowser.png" style="display: block;margin-left: auto;margin-right: auto;width: 30%;" alt="iBrowser" width="700" height="406">
+
+      <div style="text-align:center">
+        <button class="bn633-hover bn20" onclick="GazeCloudAPI.StartEyeTracking();" >Start</button>
+      </div>
+
+      <div style="text-align:center">
+        <button class="bn633-hover bn20" onclick="GazeCloudAPI.StopEyeTracking();" >Stop</button>
+      </div>
+
+      <p id = 'Click' style="text-align:center; font-size: 30px"> </p>
+      <p id = 'DClick' style="text-align:center; font-size: 30px"> </p>
+
+      <div style="text-align:center">
+        <button class="bn632-hover bn20" onclick="clickit();" >Click Me!</button>
+        <button class="bn632-hover bn20" onclick="dclickit();" >Don't Click Me!</button>
+      </div>
+
+      <div >
+         <p >
+            Data:
+         <p id = "GazeData" > </p>
+         <p id = "HeadPhoseData" > </p>
+         <p id = "HeadRotData" > </p>
+         </p>
+      </div>
+
+      <div id ="gaze" style ='position: absolute;display:none;width: 100px;height: 100px;border-radius: 50%;border: solid 2px  rgba(255, 255,255, .2);	box-shadow: 0 0 100px 3px rgba(125, 125,125, .5);	pointer-events: none;	z-index: 999999'></div>
+
+      ;
+   </body>
+</html>
